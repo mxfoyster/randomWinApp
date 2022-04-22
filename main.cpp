@@ -67,6 +67,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	LPSTR heightBoxLabel = (LPSTR)"Enter Height:";
 	LPSTR paddleStyleSelectLabel = (LPSTR)"Choose Paddle Type:";
+	LPSTR resultText = (LPSTR)"Whitewater Paddle Selected";
+	bool wwPaddleSelected = true;
 	 
 	//Handle OUR msg's HERE!!!
 	switch(Message) 
@@ -75,6 +77,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		{
 			MakeMenu(hwnd);	
             HeightBox(hwnd);
+            PaddleSelectRadioButtons(hwnd);
+            ResultButton(hwnd);
 		}
 		return 0; //instead of break
 		
@@ -82,8 +86,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		{
 			PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
-			TextOut(hdc, 100, 52, heightBoxLabel, strlen(heightBoxLabel));
+			TextOut(hdc, 100, 42, heightBoxLabel, strlen(heightBoxLabel));
 			TextOut(hdc, 46, 82, paddleStyleSelectLabel, strlen(paddleStyleSelectLabel));
+			if (wwPaddleSelected) TextOut(hdc, 46, 200, resultText, strlen(resultText));
 		}
 		
 		case WM_COMMAND:
