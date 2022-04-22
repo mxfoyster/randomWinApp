@@ -1,7 +1,9 @@
 #include <windows.h>
-#include "dialogs.h"
+#include "dialogs.h" //My dialogs
+#include "controls.h"
 #include <iostream>
 
+//Constants for event loops, etc
 #define ID_FILE_EXIT 901
 #define ID_STUFF_GO 902
 #define ID_HELP_ABOUT 912 
@@ -37,7 +39,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
-	hwnd = CreateWindowEx(WS_EX_CLIENTEDGE,"WindowClass","Random Windows App",WS_VISIBLE|WS_OVERLAPPEDWINDOW,
+	hwnd = CreateWindowEx(WS_EX_CLIENTEDGE,"WindowClass","Paddle Length Selector",WS_VISIBLE|WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, /* x */
 		CW_USEDEFAULT, /* y */
 		640, /* width */
@@ -63,14 +65,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 /* This is where all the input to the window goes to */
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 {
+	LPSTR heightBoxLabel = (LPSTR)"Enter Height:";
+	LPSTR paddleStyleSelectLabel = (LPSTR)"Choose Paddle Type:";
+	 
 	//Handle OUR msg's HERE!!!
 	switch(Message) 
 	{
 		case WM_CREATE:
 		{
 			MakeMenu(hwnd);	
+            HeightBox(hwnd);
 		}
-		break;
+		return 0; //instead of break
+		
+		case WM_PAINT:
+		{
+			PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+			TextOut(hdc, 100, 52, heightBoxLabel, strlen(heightBoxLabel));
+			TextOut(hdc, 46, 82, paddleStyleSelectLabel, strlen(paddleStyleSelectLabel));
+		}
+		
 		case WM_COMMAND:
 			 switch(LOWORD(wParam))
             {
@@ -100,11 +115,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		//left click on window
 		case WM_LBUTTONDOWN:
         {
-            char szFileName[MAX_PATH];
-            HINSTANCE hInstance = GetModuleHandle(NULL);
-
-            GetModuleFileName(hInstance, szFileName, MAX_PATH);
-            MessageBox(hwnd, szFileName, "This program is:", MB_OK | MB_ICONINFORMATION);
+//            char szFileName[MAX_PATH];
+//            HINSTANCE hInstance = GetModuleHandle(NULL);
+//
+//            GetModuleFileName(hInstance, szFileName, MAX_PATH);
+//            MessageBox(hwnd, szFileName, "This program is:", MB_OK | MB_ICONINFORMATION);
         }
 		break;
 		// Upon close,  exit msg loop 
