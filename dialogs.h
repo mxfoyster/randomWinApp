@@ -2,7 +2,7 @@
 void AboutDlg(HWND hwnd)
 {
             HINSTANCE hInstance = GetModuleHandle(NULL);
-            MessageBox(hwnd, "Random Windows Program v1.00", "About", MB_OK | MB_ICONINFORMATION);
+            MessageBox(hwnd, "PADDLE LENGTH CALCULATOR v1.00\n\nBy Mark Foyster.\n\nCreated April 2022", "About", MB_OK | MB_ICONINFORMATION);
 }
 
 //exit dialog

@@ -1,12 +1,14 @@
 #include <windows.h>
+#include <string>
 #include "dialogs.h" //My dialogs
 #include "controls.h"
-#include <iostream>
+#include "calculations.h"
 
 //Constants for event loops, etc
 #define ID_FILE_EXIT 901
 #define ID_STUFF_GO 902
 #define ID_HELP_ABOUT 912 
+
 
 
 //function prototypes
@@ -67,16 +69,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	LPSTR heightBoxLabel = (LPSTR)"Enter Height:";
 	LPSTR paddleStyleSelectLabel = (LPSTR)"Choose Paddle Type:";
-	LPSTR resultText = (LPSTR)"Whitewater Paddle Selected";
-	bool wwPaddleSelected = true;
+	LPSTR resultText = (LPSTR)"";
+	TCHAR heightFromUser[20]; //we'll put the user data here
+	static HWND hHeight; //The handle for the height input box
 	 
-	//Handle OUR msg's HERE!!!
+	//Handle SYSTEM msg's HERE!!! (Inc mouse clicks etc)
 	switch(Message) 
 	{
 		case WM_CREATE:
 		{
 			MakeMenu(hwnd);	
-            HeightBox(hwnd);
+            hHeight = HeightBox(hwnd); //Function returns the handle so we can get the input later
             PaddleSelectRadioButtons(hwnd);
             ResultButton(hwnd);
 		}
@@ -88,52 +91,55 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hwnd, &ps);
 			TextOut(hdc, 100, 42, heightBoxLabel, strlen(heightBoxLabel));
 			TextOut(hdc, 46, 82, paddleStyleSelectLabel, strlen(paddleStyleSelectLabel));
-			if (wwPaddleSelected) TextOut(hdc, 46, 200, resultText, strlen(resultText));
+			TextOut(hdc, 46, 200, resultText, strlen(resultText));
 		}
+		break;
 		
+		
+		//this is the event loop FOR OUR EVENTS
 		case WM_COMMAND:
 			 switch(LOWORD(wParam))
             {
-                case ID_HELP_ABOUT:
+                //if our button is pressed
+				case IDC_RESULT_BTN:
+				{
+					GetWindowText(hHeight, heightFromUser, 20); //get the inputted height
+					int height = ConvertHeight(heightFromUser); //sanitise and convert
+					bool isWW = false; //flag we set from radiobuttons
+					if (IsDlgButtonChecked(hwnd, IDC_CHK1) == BST_CHECKED) isWW = true; //from our radiobuttons
+					
+					if (height == -1) WarnText(hwnd, "Invalid Number, try again");
+					else 
+					{
+						CalculateLength(isWW, height, hwnd);
+						//ResultText(hwnd, paddleLength);
+					}
+				}
+				break;
+				
+				case ID_HELP_ABOUT: //help > about pressed
         		{
-            		AboutDlg(hwnd);
-					break;
+            		AboutDlg(hwnd);	
         		}
+        		break;
         		
-				case ID_FILE_EXIT:
+				case ID_FILE_EXIT: //file > exit pressed
 				{	
 					if (CloseDlg(hwnd) == IDYES) PostQuitMessage(0); //if we choose exit, check sure using our dialog box
-					break;
 				}
-                
+                break;
                 case ID_STUFF_GO:
 
                 break;
+                // END OF WM_COMMAND EVENT DETECTION
             }
             break;
-		case ID_FILE_EXIT:
-		{
 		
-			PostQuitMessage(0);
+		case WM_DESTROY: //window closed with corner X
+		{
+			PostQuitMessage(0);	
 		}
 		break;
-		//left click on window
-		case WM_LBUTTONDOWN:
-        {
-//            char szFileName[MAX_PATH];
-//            HINSTANCE hInstance = GetModuleHandle(NULL);
-//
-//            GetModuleFileName(hInstance, szFileName, MAX_PATH);
-//            MessageBox(hwnd, szFileName, "This program is:", MB_OK | MB_ICONINFORMATION);
-        }
-		break;
-		// Upon close,  exit msg loop 
-		case WM_DESTROY: 
-		{
-			PostQuitMessage(0);
-			break;
-		}
-		
 		//All the messages we don't handle ourselves
 		default:
 			return DefWindowProc(hwnd, Message, wParam, lParam);
