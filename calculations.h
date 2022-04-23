@@ -31,14 +31,12 @@ void CalculateLength(bool isWW, int height, HWND hwnd)
 	std::string textBefore = "Paddle Length Required: ";
 	std::string textAfter = " Cms";
 	std::string finalMsg = textBefore + paddleLength + textAfter;
-	LPCSTR finalMsgLPC = finalMsg.c_str();
+	LPCSTR finalMsgLPC = finalMsg.c_str(); //we built our string using c++ <string> and now we must convert it
 
-
+	//displaying directly from here gets around scope issues
 	static HWND hResultText;
-	hResultText = CreateWindow("STATIC", finalMsgLPC, 
-            WS_CHILD | WS_VISIBLE, 
+	hResultText = CreateWindow("STATIC", finalMsgLPC, WS_CHILD | WS_VISIBLE, 
             200, 200, 300, 25, hwnd, (HMENU)IDC_RESULT_TEXT, GetModuleHandle(NULL), NULL);
-
 }
 
 //here we can sanitise our data and return the integer. We'll set it to -1 if invalid
@@ -48,10 +46,12 @@ int ConvertHeight(char *heightStr)
 	try 
 	{
     	height = std::stoi(heightStr);
+		if (height < 50 || height > 280) height = -1;
 	} 
 	catch (std::exception const &e) 
 	{
     	height = -1;
 	}
+	
 	return height;
 }

@@ -1,15 +1,13 @@
 #include <windows.h>
-#include <string>
-#include "dialogs.h" //My dialogs
-#include "controls.h"
-#include "calculations.h"
+#include "dialogs.h" //the about and exit dialogs
+#include "controls.h" //the inputs etc
+#include "calculations.h" //colculating and displaying the data etc
 
 //Constants for event loops, etc
 #define ID_FILE_EXIT 901
 #define ID_STUFF_GO 902
-#define ID_HELP_ABOUT 912 
-
-
+#define ID_HELP_ABOUT 912
+#define ID_HELP_INSTRUCTIONS 911
 
 //function prototypes
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
@@ -32,8 +30,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	/* White, COLOR_WINDOW is just a #define for a system color, try Ctrl+Clicking it */
 	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
 	wc.lpszClassName = "WindowClass";
-	wc.hIcon		 = LoadIcon(NULL, IDI_APPLICATION); /* Load a standard icon */
-	wc.hIconSm		 = LoadIcon(NULL, IDI_APPLICATION); /* use the name "A" to use the project icon */
+	wc.hIcon		 = LoadIcon(hInstance, "A"); /* Load a standard icon */
+	wc.hIconSm		 = LoadIcon(hInstance, "A"); /* use the name "A" to use the project icon */
 
 	if(!RegisterClassEx(&wc)) //error handler for couldn't register window class
 	{
@@ -95,7 +93,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 		
-		
 		//this is the event loop FOR OUR EVENTS
 		case WM_COMMAND:
 			 switch(LOWORD(wParam))
@@ -109,17 +106,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 					if (IsDlgButtonChecked(hwnd, IDC_CHK1) == BST_CHECKED) isWW = true; //from our radiobuttons
 					
 					if (height == -1) WarnText(hwnd, "Invalid Number, try again");
-					else 
-					{
-						CalculateLength(isWW, height, hwnd);
-						//ResultText(hwnd, paddleLength);
-					}
+					else CalculateLength(isWW, height, hwnd);
 				}
 				break;
 				
 				case ID_HELP_ABOUT: //help > about pressed
         		{
             		AboutDlg(hwnd);	
+        		}
+        		break;
+        		
+        		case ID_HELP_INSTRUCTIONS: //help > Instructions pressed
+        		{
+            		InstructionsDlg(hwnd);	
         		}
         		break;
         		
@@ -158,14 +157,11 @@ void MakeMenu(HWND hwnd)
     hSubMenu = CreatePopupMenu();
     AppendMenu(hSubMenu, MF_STRING, ID_FILE_EXIT, "E&xit");
     AppendMenu(hMenu, MF_STRING | MF_POPUP, (UINT_PTR)hSubMenu, "&File"); //UINT Cast now UINT_PTR to get around 32bit vs 64 bit *NOT IDEAL*
-
-    hSubMenu = CreatePopupMenu();
-    AppendMenu(hSubMenu, MF_STRING, ID_STUFF_GO, "&Go");
-    AppendMenu(hMenu, MF_STRING | MF_POPUP, (UINT_PTR)hSubMenu, "&Stuff");
-    
+  
     //Let's build my help menu here
 	hSubMenu = CreatePopupMenu();
     AppendMenu(hSubMenu, MF_STRING, ID_HELP_ABOUT, "&About");
+    AppendMenu(hSubMenu, MF_STRING, ID_HELP_INSTRUCTIONS, "&Instructions");
     AppendMenu(hMenu, MF_STRING | MF_POPUP, (UINT_PTR)hSubMenu, "&Help");
 
     SetMenu(hwnd, hMenu);

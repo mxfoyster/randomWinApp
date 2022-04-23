@@ -41,10 +41,11 @@ void ResultButton(HWND hwnd)
 		200, 150, 100, 25, hwnd, (HMENU) IDC_RESULT_BTN, GetModuleHandle(NULL), NULL);
 }
 
+//we use this to display static warnings, eg: invalid height
 void WarnText(HWND hwnd, LPCSTR resultText) //For the text to work in the CreateWindow, it MUST be a pointer
 {
 	static HWND hResultText;
 	hResultText = CreateWindow("STATIC", resultText, 
             WS_CHILD | WS_VISIBLE, 
-            200, 200, 200, 25, hwnd, (HMENU)IDC_RESULT_TEXT, GetModuleHandle(NULL), NULL);
+            200, 200, 300, 25, hwnd, (HMENU)IDC_RESULT_TEXT, GetModuleHandle(NULL), NULL);
 }

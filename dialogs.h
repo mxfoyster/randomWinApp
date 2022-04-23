@@ -10,6 +10,15 @@ int CloseDlg(HWND hwnd)
 {
             int mbResult;
 			HINSTANCE hInstance = GetModuleHandle(NULL);
-            mbResult =MessageBox(hwnd, "Are you sure you wish to leave?", "Quit", MB_YESNO | MB_ICONQUESTION);
+            mbResult = MessageBox(hwnd, "Are you sure you wish to leave?", "Quit", MB_YESNO | MB_ICONQUESTION);
+            return mbResult;
+}
+
+//Instructions dialog
+int InstructionsDlg(HWND hwnd)
+{
+            int mbResult;
+			HINSTANCE hInstance = GetModuleHandle(NULL);
+            mbResult = MessageBox(hwnd, "Enter your height in Centimetres into the box\n\nThen select the type of paddling.\n\nPress CALCULATE and your result will be displayed", "INSTRUCTIONS", MB_OK | MB_ICONINFORMATION);
             return mbResult;
 }
